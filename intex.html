@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07152f">
+<title>ANGOLA PRO ACADEMY</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#07152f;color:#fff}
+header{padding:18px;background:#102447;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{color:#42e8a5;font-weight:bold;font-size:20px}
+main{max-width:1150px;margin:auto;padding:20px}
+.hero{text-align:center;padding:35px 15px}
+.hero h1{font-size:clamp(27px,5vw,44px)}
+.hero p,.course p{color:#c2d0e5;line-height:1.6}
+button{border:0;padding:12px 16px;border-radius:9px;cursor:pointer;font-weight:bold}
+.primary{background:#42e8a5;color:#07152f}
+.secondary{background:#24436d;color:white}
+input,textarea{width:100%;padding:13px;border:1px solid #345078;border-radius:9px;background:#102447;color:white}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.course,.panel{background:#102447;border:1px solid #24436d;border-radius:14px;padding:18px}
+.course h3{margin-bottom:8px}
+.icon{font-size:32px}
+section{margin:30px 0}
+.tag{color:#42e8a5;font-size:13px}
+#chatButton{position:fixed;right:17px;bottom:17px;background:#42e8a5;z-index:5}
+#chatBox{position:fixed;right:12px;bottom:75px;width:min(390px,calc(100% - 24px));height:min(570px,75dvh);background:#0d2145;border:1px solid #42e8a5;border-radius:15px;display:flex;flex-direction:column;z-index:10;box-shadow:0 5px 30px #0008}
+#chatHeader{padding:14px;background:#19345d;border-radius:14px 14px 0 0}
+#messages{padding:12px;overflow-y:auto;flex:1}
+.message{padding:11px;margin:9px 0;border-radius:10px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.bot{background:#19345d}
+.user{background:#17654e;margin-left:20px}
+#chatForm{display:flex;gap:7px;padding:10px}
+#chatForm input{min-width:0}
+.hidden{display:none!important}
+footer{text-align:center;padding:25px;color:#bdcce4}
+@media(max-width:480px){main{padding:14px}.hero{padding:25px 5px}}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="logo">🇦🇴 ANGOLA PRO ACADEMY</div>
+  <button class="primary" onclick="document.getElementById('courses').scrollIntoView({behavior:'smooth'})">Ver cursos</button>
+</header>
+
+<div class="hero">
+  <h1>O teu futuro começa com conhecimento 🚀</h1>
+  <p>Aprende novas competências, pratica e prepara-te para novas oportunidades.</p>
+  <button class="primary" onclick="document.getElementById('courses').scrollIntoView({behavior:'smooth'})">Explorar formação</button>
+  <button class="secondary" onclick="toggleChat()">Falar com a IA 🤖</button>
+</div>
+
+<main>
+<section class="panel">
+  <h2>🔎 Encontrar um curso</h2>
+  <input id="search" placeholder="Ex.: programação, saúde, mecânica..." oninput="renderCourses()">
+  <p id="courseCount"></p>
+</section>
+
+<section id="courses">
+  <h2>🎓 Catálogo de formação</h2>
+  <div class="grid" id="courseGrid"></div>
+</section>
+
+<section class="panel">
+  <h2>🤖 Assistente inteligente</h2>
+  <p>Faz perguntas sobre estudos, tecnologia, ciências, línguas, profissões e muitos outros temas.</p>
+  <button class="primary" onclick="toggleChat()">Abrir chat IA</button>
+</section>
+
+<section class="panel">
+  <h2>📚 Como funciona?</h2>
+  <p>1. Escolhe uma área de formação.</p>
+  <p>2. Estuda os materiais disponibilizados.</p>
+  <p>3. Pratica com exercícios e questionários.</p>
+  <p>4. Acompanha o teu progresso quando a conta e a base de dados estiverem configuradas.</p>
+</section>
+</main>
+
+<button id="chatButton" onclick="toggleChat()">🤖 Conversar com a IA</button>
+
+<div id="chatBox" class="hidden">
+  <div id="chatHeader">
+    <strong>ANGOLA PRO IA</strong>
+    <button class="secondary" style="float:right;padding:5px 10px" onclick="toggleChat()">✕</button>
+    <div style="font-size:12px;margin-top:8px">Assistente de aprendizagem</div>
+  </div>
+  <div id="messages">
+    <div class="message bot">Olá! 👋 Sou o assistente da ANGOLA PRO ACADEMY. Podes perguntar sobre qualquer assunto. Quando a IA avançada estiver ligada, poderei analisar perguntas abertas e ajudar-te com explicações, exercícios e ideias.</div>
+  </div>
+  <form id="chatForm">
+    <input id="chatInput" placeholder="Escreve qualquer pergunta..." autocomplete="off" required>
+    <button class="primary" type="submit">Enviar</button>
+  </form>
+</div>
+
+<footer>
+  <strong>🇦🇴 ANGOLA PRO ACADEMY</strong>
+  <p>Aprender, praticar e construir o futuro.</p>
+  <p>Os cursos só conferem certificação oficial quando emitidos por entidade devidamente autorizada.</p>
+</footer>
+
+<script>
+const courses = [
+["💻","Informática","Computadores, sistemas operativos e ferramentas digitais."],
+["🖥️","Manutenção de Computadores","Diagnóstico e manutenção preventiva."],
+["🌐","Redes de Computadores","Redes locais, routers, endereços IP e conectividade."],
+["🔐","Cibersegurança","Protecção de contas e segurança digital."],
+["👨‍💻","Programação","Algoritmos, lógica e desenvolvimento de software."],
+["🌍","Desenvolvimento Web","HTML, CSS, JavaScript e aplicações web."],
+["📱","Desenvolvimento Android","Fundamentos da criação de aplicações móveis."],
+["🤖","Inteligência Artificial","Conceitos de IA, modelos e utilização responsável."],
+["⚡","Electricidade","Tensão, corrente, resistência e circuitos."],
+["☀️","Energia Solar","Painéis solares, energia e eficiência."],
+["🔌","Instalações Eléctricas","Fundamentos de instalações e segurança eléctrica."],
+["🛢️","Petroquímica","Derivados do petróleo e processos industriais."],
+["🏭","Processos Industriais","Automação e fundamentos de produção."],
+["🔬","Química","Elementos, reacções e soluções."],
+["🧪","Laboratório de Ciências","Métodos científicos e segurança laboratorial."],
+["📐","Matemática","Álgebra, funções, geometria e exercícios."],
+["📖","Língua Portuguesa","Gramática, escrita e interpretação."],
+["🇬🇧","Língua Inglesa","Vocabulário, gramática e comunicação."],
+["🇫🇷","Língua Francesa","Vocabulário e comunicação básica."],
+["📊","Gestão Empresarial","Planeamento, organização e administração."],
+["💰","Contabilidade","Registos, despesas, receitas e balanços."],
+["📈","Empreendedorismo","Ideias de negócio e planeamento."],
+["📣","Marketing Digital","Publicidade, marcas e redes sociais."],
+["🎨","Design Gráfico","Composição, tipografia e identidade visual."],
+["🎬","Edição de Vídeo","Montagem, ritmo, áudio e narrativa visual."],
+["📷","Fotografia","Enquadramento, iluminação e composição."],
+["🧑‍🏫","Pedagogia","Fundamentos do ensino e aprendizagem."],
+["🩺","Saúde Pública","Prevenção, promoção da saúde e informação."],
+["🧤","Primeiros Socorros","Noções introdutórias de resposta a emergências."],
+["🌱","Agricultura","Solos, culturas e práticas agrícolas."],
+["🐄","Pecuária","Cuidados e gestão de animais de criação."],
+["🏗️","Construção Civil","Materiais, técnicas e fundamentos."],
+["📏","Desenho Técnico","Representação gráfica e leitura de desenhos."],
+["🔧","Mecânica Geral","Ferramentas e princípios mecânicos."],
+["🚗","Mecânica Automóvel","Sistemas e manutenção automóvel."],
+["❄️","Refrigeração e Climatização","Fundamentos de refrigeração e ar condicionado."],
+["🚰","Canalização","Tubagens, instalações e manutenção."],
+["🍳","Culinária","Técnicas culinárias e higiene alimentar."],
+["🥐","Pastelaria","Massas, preparação e técnicas de pastelaria."],
+["🏨","Hotelaria","Serviços, organização e atendimento."],
+["🧳","Turismo","Destinos, planeamento e serviços turísticos."],
+["🧵","Costura e Moda","Materiais, medidas e confecção."],
+["💇","Cabeleireiro","Cuidados capilares e técnicas profissionais."],
+["💅","Estética","Higiene, cuidados e fundamentos estéticos."],
+["⚖️","Cidadania e Direito","Noções de cidadania e direitos fundamentais."],
+["🚚","Logística","Armazenamento, distribuição e inventário."],
+["📦","Gestão de Stocks","Controlo e organização de mercadorias."],
+["🗂️","Secretariado","Organização, documentos e comunicação."],
+["🗣️","Comunicação Profissional","Apresentações e comunicação no trabalho."],
+["🧮","Estatística","Dados, gráficos, médias e probabilidades."],
+["🌳","Ambiente","Sustentabilidade e conservação ambiental."],
+["♻️","Gestão de Resíduos","Separação, tratamento e reciclagem."],
+["🧑‍💻","Trabalho Digital","Ferramentas digitais e organização do trabalho."],
+["🎮","Criação de Jogos","Fundamentos de jogos digitais."],
+["🎵","Produção Musical","Áudio, ritmo e fundamentos de produção."],
+["🧠","Psicologia Introdutória","Comportamento, aprendizagem e emoções."],
+["📑","Gestão de Projectos","Objectivos, tarefas, prazos e recursos."]
+];
+
+function renderCourses(){
+ const term=document.getElementById("search").value.toLowerCase().trim();
+ const filtered=courses.filter(c=>c.join(" ").toLowerCase().includes(term));
+ const grid=document.getElementById("courseGrid");
+ grid.replaceChildren();
+ document.getElementById("courseCount").textContent=filtered.length+" cursos encontrados";
+ filtered.forEach(c=>{
+  const card=document.createElement("article");
+  card.className="course";
+  const icon=document.createElement("div");
+  icon.className="icon";icon.textContent=c[0];
+  const title=document.createElement("h3");title.textContent=c[1];
+  const desc=document.createElement("p");desc.textContent=c[2];
+  const tag=document.createElement("div");tag.className="tag";tag.textContent="Área de formação";
+  const btn=document.createElement("button");btn.className="primary";btn.textContent="Perguntar à IA";
+  btn.onclick=()=>sendQuestion("Quero aprender "+c[1]+". Cria um plano de estudo para principiantes.");
+  card.append(icon,title,desc,tag,btn);
+  grid.append(card);
+ });
+}
+
+function toggleChat(){
+ document.getElementById("chatBox").classList.toggle("hidden");
+}
+
+function addMessage(text,type){
+ const box=document.getElementById("messages");
+ const div=document.createElement("div");
+ div.className="message "+type;
+ div.textContent=text;
+ box.append(div);
+ box.scrollTop=box.scrollHeight;
+}
+
+async function sendQuestion(question){
+ document.getElementById("chatBox").classList.remove("hidden");
+ addMessage(question,"user");
+
+ /*
+  A IA avançada será ligada a um servidor seguro.
+  Nunca coloques a chave secreta da API neste ficheiro público.
+ */
+ addMessage(
+  "A interface está pronta, mas a IA avançada ainda não está ligada. Para compreender perguntas abertas sobre qualquer tema, é necessário configurar um servidor com uma API de inteligência artificial. As respostas não devem ser inventadas nem apresentadas como provenientes de uma IA real antes dessa ligação.",
+  "bot"
+ );
+}
+
+document.getElementById("chatForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const input=document.getElementById("chatInput");
+ const question=input.value.trim();
+ if(!question)return;
+ input.value="";
+ sendQuestion(question);
+});
+
+renderCourses();
+</script>
+</body>
+</html>
